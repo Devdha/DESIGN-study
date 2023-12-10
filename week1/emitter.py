@@ -23,7 +23,7 @@ class Emitter:
 
         return decorator
 
-    def once(self, func, event, filter=lambda _: True):
+    def once(self, event, func, filter=lambda _: True):
         self.__add(event, func, True, filter)
 
     def removeListener(self, event, listener):
@@ -38,19 +38,28 @@ class Emitter:
             return
         del self.events[event]
 
-    def emit(self, event, **kwargs):
+    async def __emit(self, event, **kwargs):
         listeners = self.events[event]
+        asyncTasks = []
+        syncTasks = []
+        onceTasks = []
         for k in listeners:
             filter_function = listeners[k]['filter']
-            
             if filter_function is None or (filter_function(kwargs)):
                 listener = listeners[k]['listener']
 
                 if (asyncio.iscoroutinefunction(listener)):
-                    asyncio.run(listener(kwargs))
+                    asyncTasks.append(listener)
                 else:
-                    listener(kwargs)
+                    syncTasks.append(listener)
 
-                
                 if listeners[k]['once']:
-                    self.removeListener(event, k)
+                    onceTasks.append(k)
+        
+        [task(kwargs) for task in syncTasks]
+        await asyncio.gather(*[task(kwargs) for task in asyncTasks])
+        [self.removeListener(event, listener) for listener in onceTasks]
+                
+    def emit(self, event, **kwargs):
+        asyncio.run(self.__emit(event, **kwargs))
+        
