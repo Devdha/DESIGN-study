@@ -39,6 +39,9 @@ class EventEmitter:
         del self.events[event]
 
     async def __emit(self, event, **kwargs):
+        if event not in self.events:
+            print("Event not found")
+            return
         listeners = self.events[event]
         asyncTasks = []
         syncTasks = []
@@ -49,15 +52,16 @@ class EventEmitter:
                 listener = listeners[k]['listener']
 
                 if (asyncio.iscoroutinefunction(listener)):
-                    syncTasks.append(listener)
+                    asyncTasks.append(listener)
                 else:
                     syncTasks.append(listener)
 
                 if listeners[k]['once']:
                     onceTasks.append(k)
-        
-        [task(kwargs) for task in syncTasks]
-        await asyncio.gather(*[task(kwargs) for task in asyncTasks])
+    
+
+        [task(kwargs) if task.__code__.co_argcount else task() for task in syncTasks]
+        await asyncio.gather(*[task(kwargs) if task.__code__.co_argcount else task() for task in asyncTasks])
         [self.removeListener(event, listener) for listener in onceTasks]
                 
     def emit(self, event, **kwargs):
