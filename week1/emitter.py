@@ -1,6 +1,6 @@
 import asyncio
 
-class Emitter:
+class EventEmitter:
     def __init__(self):
         self.events = dict()
 
@@ -49,7 +49,7 @@ class Emitter:
                 listener = listeners[k]['listener']
 
                 if (asyncio.iscoroutinefunction(listener)):
-                    asyncTasks.append(listener)
+                    syncTasks.append(listener)
                 else:
                     syncTasks.append(listener)
 

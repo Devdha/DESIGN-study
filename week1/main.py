@@ -1,14 +1,14 @@
 from pynput import mouse
-from emitter import Emitter
+from emitter import EventEmitter
 
-emitter = Emitter()
+emitter = EventEmitter()
 
 @emitter.on("click", lambda x: x["pos_x"] < 500)
-def on_click_left(event):
+async def on_click_left(event):
     print("CLICK LEFT")
 
 @emitter.on("click", lambda x: x["pos_x"] >= 500)
-def on_click_right(event):
+async def on_click_right(event):
     print("CLICK RIGHT")
 
 def on_click(x, y, button, pressed):
