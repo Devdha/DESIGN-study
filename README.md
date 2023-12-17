@@ -28,7 +28,7 @@ Title Format: "# Week {i}. {name}"
 
 ## 2. 구현
 
-1. 초기엔 Observer pattern에 집중함
+### 2.1. 초기엔 Observer pattern에 집중함
 
 - subscribing 하는 Emitter 클래스 구현
 - 요구사항 중, decorator가 필요하다는 것을 인지
@@ -47,7 +47,7 @@ Title Format: "# Week {i}. {name}"
 - 그 외 listener(event) 관리 메소드는 추가/제거 하는 방식으로 구현 완료
 - 문제점: Emitter만 클래스화 하고 다른 건 다 딕셔너리에 넣어버림 / 코드는 짧아졌지만, 이렇게 코드짜면 인지도 힘들고 유지보수도 힘들 듯
 
-2. 비동기 동작 처리
+### 2.2. 비동기 동작 처리
 
 - 동기적인 동작을 완료할 때 쯤 아래 에러 발생
   ```
@@ -60,18 +60,41 @@ Title Format: "# Week {i}. {name}"
 - 그런 작업 없이 동기 함수처럼 호출하여 위 에러 발생
 - 이를 해결하기 위해, listener 중 async 함수인 아이들을 별도로 실행
 
-3. 비동기 비효율성
+### 2.3. 비동기 비효율성
 
 - 위 비동기 처리에서 listener의 순서대로 실행되도록 함, 이렇게 되면 비동기 함수 -> 동기 -> 비동기 or not 이러한 형태로 전개되는데, 이는 비효율적이고 비동기 함수의 이점이 많이 사라짐
 - Promise.all() 처럼 처리하면 비교적 효율적일 듯이라는 생각이 듬. python에서 똑같은 역할을 하는 asyncio.gather 발견 후 적용
 
-### 2.1. Click detection
-
-### 2.2. Define Emitter class
-
-### 2.3. Implement click listeners
-
 # Week 2.
+
+## 1. 문제 정의
+
+### 1.1. 요구사항
+
+- 1.1.1. 기능
+
+  - main.py를 실행시켰을 때 우리의 예상대로 동작가능한 서버가 뜨면 성공입니다.
+  - cats 폴더는 건드리지 않습니다. (건드려야 할 경우 저에게 문의해주세요.)
+  - python의 http.server를 활용합니다.
+  - @Injectable이 없는 모듈은 provider가 될 수 없습니다.
+  - CatsService는 다른 모듈에서도 사용될 수 있게 구현되어야 합니다.
+  - CatsController.**init** 의 argument 타입의 이름과 동일한 provider가 module에서 등록되지 않은 경우 nestjs와 같은 방식으로 에러가 나야 합니다.
+  - CatsController에서 Body, Query, Param 와 같은 argument나 path는 전부 nestjs와 동일한 방식으로 동작합니다.
+
+- 1.1.2. 사용 패턴
+
+  - 팩토리 패턴
+  - 싱글톤 패턴
+  - 커맨드 패턴
+  - 데코레이터 패턴
+  - 전략 패턴
+
+- 1.1.3. 필요 데코레이터
+  - @Injectable
+  - @Controller
+  - @Module
+  - @Get
+  - @Post
 
 # Week 3.
 
