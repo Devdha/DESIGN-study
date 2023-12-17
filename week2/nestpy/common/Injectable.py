@@ -1,4 +1,8 @@
-from pydantic import BaseModel
+from typing import Any
 
-class Injectable(BaseModel):
-    pass
+def Injectable():
+    def wrap(cls: Any) -> Any:
+        cls.__injectable = True
+        return cls
+  
+    return wrap
