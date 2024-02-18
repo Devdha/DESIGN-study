@@ -56,7 +56,7 @@ class NestApplicationRequestHandler(http.server.BaseHTTPRequestHandler):
         path = parsed_path.path
         if path == '/':
             return {}
-        # parse path to dict
+        
         params = path.strip('/').split(' ')
         param_dict = {}
         for param in params:
@@ -69,15 +69,9 @@ class NestApplicationRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         method = self.map_path_to_method('GET')
-        print(1)
         body = self.get_body()
-        print(2)
         query = self.get_query_params()
-        print(3)
         path = self.get_path_params()
-        print(4)
-
-        print(body, '/', query, path)
         
         if method:
             response = method(**body, **query, **path)
