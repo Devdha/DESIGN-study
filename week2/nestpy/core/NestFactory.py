@@ -3,7 +3,8 @@ from typing import Any, ClassVar
 import http.server
 
 import json
-from ..common.Module import registered_controllers
+from nestpy.common import registered_controllers
+from nestpy.core import HTTPRequestStrategy, GetStrategy, PostStrategy
 
 import urllib.parse
 
@@ -11,16 +12,18 @@ def serialize_to_json(data):
     if isinstance(data, list):
         res = [item.dict() for item in data]
         return json.dumps(res)
-    elif isinstance(data, dict):
+    if isinstance(data, dict):
         return json.dumps(data)
     if isinstance(data, BaseModel):
         return data.model_dump_json()
-    elif hasattr(data, 'to_dict'):
+    if hasattr(data, 'to_dict'):
         return json.dumps(data.to_dict())
-    else:
-        return json.dumps(data)
+    return json.dumps(data)
 
 class NestApplicationRequestHandler(http.server.BaseHTTPRequestHandler):
+    def set_strategy(self, strategy: HTTPRequestStrategy):
+        self.strategy = strategy
+
     def map_path_to_method(self, method: str) -> Any:
         parsed_path = urllib.parse.urlparse(self.path)
         path = parsed_path.path
@@ -37,6 +40,7 @@ class NestApplicationRequestHandler(http.server.BaseHTTPRequestHandler):
                             return method_func
                         
     def handle_method(self, method: Any):
+        return
 
         
                         
@@ -68,38 +72,12 @@ class NestApplicationRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
     def do_GET(self):
-        method = self.map_path_to_method('GET')
-        body = self.get_body()
-        query = self.get_query_params()
-        path = self.get_path_params()
-        
-        if method:
-            response = method(**body, **query, **path)
-        else:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b'Not found')
-            return
-        
-        self.send_response(200)
-        self.end_headers()
-        
-        response = serialize_to_json(response)
-        self.wfile.write(response.encode('utf-8'))
+        self.set_strategy(GetStrategy())
+        self.strategy.process_request(self)
 
     def do_POST(self):
-        method = self.map_path_to_method('POST')
-        if method:
-            response = method()
-        else:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b'Not found')
-        self.send_response(200)
-        self.end_headers()
-
-        response = serialize_to_json(response)
-        self.wfile.write(response)
+        self.set_strategy(PostStrategy())
+        self.strategy.process_request(self)
 
 # NOTE - Singleton Pattern
 class NestApplication():
