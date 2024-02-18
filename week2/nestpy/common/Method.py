@@ -1,16 +1,17 @@
-def Method(method: str, path: str = ""):
-    def decorator(func):
-        func.__http_method = method
-        func.__path = f"/{path.strip('/')}"
-        return func
-    return decorator
+def Get(path=''):
+    def wrapper(func):
+        def wrapped_func(self, *args, **kwargs):
+            return func(self, *args, **kwargs)
+        wrapped_func._http_method = 'GET'
+        wrapped_func._path = path.strip('/')
+        return wrapped_func
+    return wrapper
 
-def Get(path: str = ""):
-    def decorator(func):
-        return Method("GET", path)(func)
-    return decorator
-
-def Post(path: str = ""):
-    def decorator(func):
-        return Method("POST", path)(func)
-    return decorator
+def Post(path=''):
+    def wrapper(func):
+        def wrapped_func(self, *args, **kwargs):
+            return func(self, *args, **kwargs)
+        wrapped_func._http_method = 'POST'
+        wrapped_func._path = path.strip('/')
+        return wrapped_func
+    return wrapper

@@ -8,10 +8,14 @@ def Module(module_config: Dict[str, Any]) -> Any:
         cls.__module_config = module_config
 
         service = module_config.get('provider')
-        if service and service._is_injectable:
-            registered_services[service.__name__] = service
-        else:
-            raise Exception('Service is not injectable')
+        if service:
+            try:
+                if service._is_injectable is True:
+                    registered_services[service.__name__] = service
+                else:
+                    raise Exception('Service is not defined')
+            except AttributeError:
+                raise Exception(f"There's no injectable service named {service.__name__}")
         
         controller = module_config.get('controller')
         if controller:
@@ -26,8 +30,9 @@ def Module(module_config: Dict[str, Any]) -> Any:
                 if not provider:
                     raise Exception(f'Provider {name} is not defined')
                 providers[name] = provider
+        instance = controller(**providers)
+        registered_controllers[controller.__path] = instance
         
-        registered_controllers[controller.__path] = controller(**providers)
         return cls
 
     return wrap

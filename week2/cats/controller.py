@@ -9,7 +9,7 @@ from nestpy.common import Body, Controller, Get, Param, Post, Query
 @Controller()
 class CatsController:
     def __init__(self, service: CatsService):
-        self.service = service
+        self.service = service()
 
     @Post()
     def create(self, cat: Body[Cat]):
