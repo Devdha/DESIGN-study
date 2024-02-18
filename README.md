@@ -112,10 +112,12 @@ Title Format: "# Week {i}. {name}"
 ### 2.2. 요구사항 충족
 
 - main.py를 실행시켰을 때 우리의 예상대로 동작가능한 서버가 뜨면 성공입니다.
+  - 아래 요구사항 충족 및 서버 실행
 - python의 http.server를 활용합니다.
   - main.py에서 app을 가져오고, app 내에서 모듈 세팅 및 http.server을 사용하여 서버가 뜨도록 구현
 - @Injectable이 없는 모듈은 provider가 될 수 없습니다.
   - Injectable이 붙은 클래스를 마킹하여, 사용하도록 구현
+  - 해당 클래스의 metadata를 수정하여, 해당 클래스가 provider로 등록되도록 구현
 - CatsService는 다른 모듈에서도 사용될 수 있게 구현되어야 합니다.
 - CatsController.**init** 의 argument 타입의 이름과 동일한 provider가 module에서 등록되지 않은 경우 nestjs와 같은 방식으로 에러가 나야 합니다.
   - CatsController에서 init의 argument를 순회하며, 해당 argument의 타입이 provider로 등록되어 있는지 확인
