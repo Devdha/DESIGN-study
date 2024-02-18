@@ -15,7 +15,7 @@ def serialize_to_json(data):
         return json.dumps(data)
     if isinstance(data, BaseModel):
         return data.model_dump_json()
-    elif hasattr(data, 'to_dict'):  # Single object
+    elif hasattr(data, 'to_dict'):
         return json.dumps(data.to_dict())
     else:
         return json.dumps(data)
