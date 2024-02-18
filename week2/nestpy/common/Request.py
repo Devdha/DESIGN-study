@@ -3,14 +3,15 @@ from pydantic import BaseModel
 
 T = TypeVar('T')
 
-class Body(Generic[T]):
-    def __init__(self, type_: TypeVar = None):
-        self.type = type_
+class RequestParam(Generic[T]):
+    def __init__(self, data: T):
+        self.data = data
 
-class Query(Generic[T]):
-    def __init__(self, type_: TypeVar = None):
-        self.type = type_
+class Body(RequestParam[T]):
+    pass
 
-class Param(Generic[T]):
-    def __init__(self, type_: TypeVar = None):
-        self.type = type_
+class Query(RequestParam[T]):
+    pass
+
+class Param(RequestParam[T]):
+    pass

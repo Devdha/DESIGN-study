@@ -11,18 +11,18 @@ cats: list[Cat] = [
 
 @Injectable()
 class CatsService:
-    def create(self, cat: Body[Cat]):
+    def create(self, cat: Cat):
         for c in cats:
             if c.id == cat.id:
                 raise Exception("Cat already exists")
         cats.append(cat)
         return cat
 
-    def list(self, gender: Optional[Query[str]] = None):
+    def list(self, gender: Optional[str] = None):
         filter = lambda cat: cat.gender == gender if gender else True
         return [cat for cat in cats if filter(cat)]
 
-    def get(self, id: Param[str]):
+    def get(self, id: str):
         for cat in cats:
             if cat.id == id:
                 return cat
